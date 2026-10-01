@@ -1,7 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "global-choice-hub",
+  "name": "global-choice-hub-the-digital-commerce-intelligence-and-af",
   "compatibility_date": "2026-09-18",
+  "preview_urls": false,
   "assets": {
     "directory": "."
   },
@@ -9,3 +10,4 @@
     "enabled": true
   }
 }
+"preview_urls": false,
