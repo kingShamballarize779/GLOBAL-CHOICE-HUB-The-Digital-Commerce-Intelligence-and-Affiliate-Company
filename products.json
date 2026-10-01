@@ -1,6 +1,21 @@
 {
   "schemaVersion": "0.1",
-  "catalogueStatus": "awaiting-authoritative-import",
-  "verificationStatus": "pending",
-  "products": []
+  "catalogueStatus": "authoritative-import",
+  "verificationStatus": "verified",
+  "products": [
+    {
+      "id": "GCH-P001",
+      "name": "Shopify",
+      "category": "Business & Creator Tools",
+      "merchant": "Shopify",
+      "description": "Commerce platform for building, running and growing online and in-person businesses.",
+      "officialUrl": "https://www.shopify.com/",
+      "verification": {
+        "status": "verified",
+        "source": "Shopify official website",
+        "sourceUrl": "https://www.shopify.com/",
+        "verifiedAt": "2026-10-01"
+      }
+    }
+  ]
 }
