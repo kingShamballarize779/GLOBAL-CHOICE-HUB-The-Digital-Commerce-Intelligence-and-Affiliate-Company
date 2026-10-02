@@ -2,6 +2,11 @@ const productGrid = document.getElementById("product-grid");
 const categoryGrid = document.getElementById("category-grid");
 const searchInput = document.getElementById("search");
 
+const profileSection = document.getElementById("product-profile");
+const profileName = document.getElementById("profile-name");
+const profileContent = document.getElementById("profile-content");
+const backToDiscoveries = document.getElementById("back-to-discoveries");
+
 let products = [];
 let activeCategory = "All";
 
@@ -34,6 +39,7 @@ function renderProductStats() {
 
   const stats = document.createElement("div");
   stats.id = "gch-catalogue-stats";
+
   stats.innerHTML = `
     <p>
       <strong>${products.length}</strong>
@@ -76,22 +82,42 @@ function renderProducts(items) {
         ${escapeHtml(product.verification?.source || "GCH")}
       </p>
 
-      ${
-        product.officialUrl
-          ? `
-            <a
-              href="${escapeHtml(product.officialUrl)}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="button"
-            >
-              Explore Official Site
-            </a>
-          `
-          : ""
-      }
+      <div class="product-actions">
+
+        <button
+          type="button"
+          class="button"
+          data-profile-id="${escapeHtml(product.id)}"
+        >
+          View GCH Discovery
+        </button>
+
+        ${
+          product.officialUrl
+            ? `
+              <a
+                href="${escapeHtml(product.officialUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="button"
+              >
+                Explore Official Site
+              </a>
+            `
+            : ""
+        }
+
+      </div>
     </article>
   `).join("");
+
+  productGrid
+    .querySelectorAll("[data-profile-id]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        openProductProfile(button.dataset.profileId);
+      });
+    });
 }
 
 function renderCategories() {
@@ -112,6 +138,7 @@ function renderCategories() {
         aria-pressed="${selected}"
       >
         <h3>${escapeHtml(category)}</h3>
+
         <p>
           ${count} verified ${count === 1 ? "discovery" : "discoveries"}
         </p>
@@ -119,13 +146,15 @@ function renderCategories() {
     `;
   }).join("");
 
-  categoryGrid.querySelectorAll("[data-category]").forEach(button => {
-    button.addEventListener("click", () => {
-      activeCategory = button.dataset.category;
-      renderCategories();
-      applyFilters();
+  categoryGrid
+    .querySelectorAll("[data-category]")
+    .forEach(button => {
+      button.addEventListener("click", () => {
+        activeCategory = button.dataset.category;
+        renderCategories();
+        applyFilters();
+      });
     });
-  });
 }
 
 function applyFilters() {
@@ -167,6 +196,107 @@ function applyFilters() {
   }
 }
 
+function openProductProfile(productId) {
+  const product = products.find(item => item.id === productId);
+
+  if (!product || !profileSection || !profileName || !profileContent) {
+    return;
+  }
+
+  profileName.textContent = product.name;
+
+  profileContent.innerHTML = `
+    <article class="product-profile-card">
+
+      <p class="eyebrow">VERIFIED DISCOVERY</p>
+
+      <h3>${escapeHtml(product.name)}</h3>
+
+      <p class="product-category">
+        ${escapeHtml(product.category)}
+      </p>
+
+      <p>
+        ${escapeHtml(product.description)}
+      </p>
+
+      <div class="verification">
+        <strong>Verification</strong>
+
+        <p>
+          ✓ Verified by
+          ${escapeHtml(product.verification?.source || "GCH")}
+        </p>
+
+        ${
+          product.verification?.verifiedAt
+            ? `
+              <p>
+                Verified:
+                ${escapeHtml(product.verification.verifiedAt)}
+              </p>
+            `
+            : ""
+        }
+      </div>
+
+      ${
+        product.merchant
+          ? `
+            <p>
+              <strong>Merchant:</strong>
+              ${escapeHtml(product.merchant)}
+            </p>
+          `
+          : ""
+      }
+
+      ${
+        product.officialUrl
+          ? `
+            <p>
+              <a
+                href="${escapeHtml(product.officialUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="button"
+              >
+                Explore Official Site
+              </a>
+            </p>
+          `
+          : ""
+      }
+
+    </article>
+  `;
+
+  profileSection.hidden = false;
+
+  profileSection.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+}
+
+function closeProductProfile() {
+  if (!profileSection) {
+    return;
+  }
+
+  profileSection.hidden = true;
+
+  const discoveryDesk =
+    document.getElementById("discovery-desk");
+
+  if (discoveryDesk) {
+    discoveryDesk.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+}
+
 async function loadCatalogue() {
   try {
     const response = await fetch("products.json", {
@@ -192,7 +322,9 @@ async function loadCatalogue() {
     renderCategories();
 
     const resultCount = document.createElement("p");
+
     resultCount.id = "gch-result-count";
+
     resultCount.textContent =
       `${products.length} verified ${
         products.length === 1 ? "discovery" : "discoveries"
@@ -221,5 +353,11 @@ if (searchInput) {
   searchInput.addEventListener("input", applyFilters);
 }
 
+if (backToDiscoveries) {
+  backToDiscoveries.addEventListener(
+    "click",
+    closeProductProfile
+  );
+}
+
 loadCatalogue();
-                              
