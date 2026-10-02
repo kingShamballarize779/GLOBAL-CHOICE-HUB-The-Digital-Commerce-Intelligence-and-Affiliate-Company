@@ -3,6 +3,7 @@ const categoryGrid = document.getElementById("category-grid");
 const searchInput = document.getElementById("search");
 
 let products = [];
+let activeCategory = "All";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -11,6 +12,39 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getCategories() {
+  return [
+    "All",
+    ...new Set(
+      products
+        .map(product => product.category)
+        .filter(Boolean)
+    )
+  ];
+}
+
+function renderProductStats() {
+  const heading = document.querySelector("#discovery-desk .section-heading");
+
+  if (!heading || document.getElementById("gch-catalogue-stats")) {
+    return;
+  }
+
+  const stats = document.createElement("div");
+  stats.id = "gch-catalogue-stats";
+  stats.innerHTML = `
+    <p>
+      <strong>${products.length}</strong>
+      verified ${products.length === 1 ? "discovery" : "discoveries"}
+      across
+      <strong>${getCategories().length - 1}</strong>
+      ${getCategories().length - 1 === 1 ? "category" : "categories"}.
+    </p>
+  `;
+
+  heading.appendChild(stats);
 }
 
 function renderProducts(items) {
@@ -38,51 +72,72 @@ function renderProducts(items) {
       </p>
 
       <p class="verification">
-        ✓ Verified by ${escapeHtml(product.verification?.source || "GCH")}
+        ✓ Verified by
+        ${escapeHtml(product.verification?.source || "GCH")}
       </p>
 
       ${
         product.officialUrl
-          ? `<a
+          ? `
+            <a
               href="${escapeHtml(product.officialUrl)}"
               target="_blank"
               rel="noopener noreferrer"
               class="button"
             >
               Explore Official Site
-            </a>`
+            </a>
+          `
           : ""
       }
     </article>
   `).join("");
 }
 
-function renderCategories(items) {
-  const categories = [...new Set(
-    items
-      .map(product => product.category)
-      .filter(Boolean)
-  )].sort();
+function renderCategories() {
+  const categories = getCategories();
 
-  if (!categories.length) {
-    categoryGrid.innerHTML = "";
-    return;
-  }
+  categoryGrid.innerHTML = categories.map(category => {
+    const count = category === "All"
+      ? products.length
+      : products.filter(product => product.category === category).length;
 
-  categoryGrid.innerHTML = categories.map(category => `
-    <article class="category-card">
-      <h3>${escapeHtml(category)}</h3>
-      <p>
-        Explore verified discoveries in this curated path.
-      </p>
-    </article>
-  `).join("");
+    const selected = activeCategory === category;
+
+    return `
+      <button
+        type="button"
+        class="category-card"
+        data-category="${escapeHtml(category)}"
+        aria-pressed="${selected}"
+      >
+        <h3>${escapeHtml(category)}</h3>
+        <p>
+          ${count} verified ${count === 1 ? "discovery" : "discoveries"}
+        </p>
+      </button>
+    `;
+  }).join("");
+
+  categoryGrid.querySelectorAll("[data-category]").forEach(button => {
+    button.addEventListener("click", () => {
+      activeCategory = button.dataset.category;
+      renderCategories();
+      applyFilters();
+    });
+  });
 }
 
-function filterProducts() {
-  const query = searchInput.value.trim().toLowerCase();
+function applyFilters() {
+  const query = searchInput
+    ? searchInput.value.trim().toLowerCase()
+    : "";
 
   const filtered = products.filter(product => {
+    const matchesCategory =
+      activeCategory === "All" ||
+      product.category === activeCategory;
+
     const searchableText = [
       product.name,
       product.category,
@@ -93,10 +148,23 @@ function filterProducts() {
       .join(" ")
       .toLowerCase();
 
-    return searchableText.includes(query);
+    const matchesSearch =
+      !query || searchableText.includes(query);
+
+    return matchesCategory && matchesSearch;
   });
 
   renderProducts(filtered);
+
+  const existingCount =
+    document.getElementById("gch-result-count");
+
+  if (existingCount) {
+    existingCount.textContent =
+      `${filtered.length} verified ${
+        filtered.length === 1 ? "discovery" : "discoveries"
+      } shown`;
+  }
 }
 
 async function loadCatalogue() {
@@ -106,19 +174,36 @@ async function loadCatalogue() {
     });
 
     if (!response.ok) {
-      throw new Error(`Catalogue request failed: ${response.status}`);
+      throw new Error(
+        `Catalogue request failed: ${response.status}`
+      );
     }
 
     const catalogue = await response.json();
 
     products = Array.isArray(catalogue.products)
       ? catalogue.products.filter(
-          product => product.verification?.status === "verified"
+          product =>
+            product.verification?.status === "verified"
         )
       : [];
 
-    renderProducts(products);
-    renderCategories(products);
+    renderProductStats();
+    renderCategories();
+
+    const resultCount = document.createElement("p");
+    resultCount.id = "gch-result-count";
+    resultCount.textContent =
+      `${products.length} verified ${
+        products.length === 1 ? "discovery" : "discoveries"
+      } shown`;
+
+    productGrid.parentNode.insertBefore(
+      resultCount,
+      productGrid
+    );
+
+    applyFilters();
 
   } catch (error) {
     console.error("GCH catalogue error:", error);
@@ -133,7 +218,7 @@ async function loadCatalogue() {
 }
 
 if (searchInput) {
-  searchInput.addEventListener("input", filterProducts);
+  searchInput.addEventListener("input", applyFilters);
 }
 
 loadCatalogue();
