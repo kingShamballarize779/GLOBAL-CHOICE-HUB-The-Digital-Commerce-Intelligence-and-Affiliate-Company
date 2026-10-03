@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "0.2",
+  "catalogueStatus": "authoritative-import",
+  "verificationStatus": "verified",
+  "products": [
+    {
+      "id": "GCH-P001",
+      "name": "Shopify",
+      "category": "Business & Creator Tools",
+      "merchant": "Shopify",
+      "description": "Commerce platform for building, running and growing online and in-person businesses.",
+      "officialUrl": "https://www.shopify.com/",
+      "verification": {
+        "status": "verified",
+        "source": "Shopify official website",
+        "sourceUrl": "https://www.shopify.com/",
+        "verifiedAt": "2026-10-01"
+      },
+      "referral": {
+        "status": "not-connected",
+        "program": null,
+        "network": null,
+        "referralUrl": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "GCH-P002",
+      "name": "Canva",
+      "category": "Business & Creator Tools",
+      "merchant": "Canva",
+      "description": "Visual communication and design platform for creating designs, presentations, social content and other visual materials.",
+      "officialUrl": "https://www.canva.com/",
+      "verification": {
+        "status": "verified",
+        "source": "Canva official website",
+        "sourceUrl": "https://www.canva.com/",
+        "verifiedAt": "2026-10-02"
+      },
+      "referral": {
+        "status": "not-connected",
+        "program": null,
+        "network": null,
+        "referralUrl": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "GCH-P003",
+      "name": "Google Workspace",
+      "category": "Business & Creator Tools",
+      "merchant": "Google",
+      "description": "Business productivity and collaboration suite including Gmail, Drive, Meet, Docs, Sheets and other workplace tools.",
+      "officialUrl": "https://workspace.google.com/",
+      "verification": {
+        "status": "verified",
+        "source": "Google Workspace official website",
+        "sourceUrl": "https://workspace.google.com/",
+        "verifiedAt": "2026-10-02"
+      },
+      "referral": {
+        "status": "not-connected",
+        "program": null,
+        "network": null,
+        "referralUrl": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "GCH-P004",
+      "name": "Notion",
+      "category": "Business & Creator Tools",
+      "merchant": "Notion",
+      "description": "Workspace for organizing information, projects, documents, databases and team collaboration.",
+      "officialUrl": "https://www.notion.com/",
+      "verification": {
+        "status": "verified",
+        "source": "Notion official website",
+        "sourceUrl": "https://www.notion.com/",
+        "verifiedAt": "2026-10-02"
+      },
+      "referral": {
+        "status": "not-connected",
+        "program": null,
+        "network": null,
+        "referralUrl": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    },
+    {
+      "id": "GCH-P005",
+      "name": "Adobe Creative Cloud",
+      "category": "Creator & Digital Media",
+      "merchant": "Adobe",
+      "description": "Creative software platform providing applications and services for photography, graphic design, video, illustration and other digital creative work.",
+      "officialUrl": "https://www.adobe.com/creativecloud.html",
+      "verification": {
+        "status": "verified",
+        "source": "Adobe official website",
+        "sourceUrl": "https://www.adobe.com/creativecloud.html",
+        "verifiedAt": "2026-10-02"
+      },
+      "referral": {
+        "status": "not-connected",
+        "program": null,
+        "network": null,
+        "referralUrl": null,
+        "verifiedBy": null,
+        "verifiedAt": null
+      }
+    }
+  ]
+}
